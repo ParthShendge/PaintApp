@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');                                                                                                                            
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Space Mono", Monospace;
+}
+#canvas, #canvas2{
+  position: absolute;
+  border: 1px solid black;
+  z-index: 1;
+  background: white;
+}
+#canvas2{
+  z-index: 2;
+  background: transparent;
+}
+
+#popUp{
+  width: 90%;
+  max-width: 400px;
+  height: 200px;
+  padding: 3rem 1rem 3rem 1rem;
+  position: absolute;
+  z-index: -1;
+/*  transform: rotate(90deg);*/
+  transition: 0.5s;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  font-size: 0.8rem;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 10px;
+  border: 3px solid #444;
+  backdrop-filter: blur(2px);
+  line-height: 1.5rem;
+}
+#popUpHeader{
+  border-radius: 7px 7px 0 0;
+  background: gold;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.3rem 1rem;
+  line-height: 1.2rem;
+  color: black;
+}
+#popUpClosebtn{
+  border: none;
+  outline: none;
+  background: tomato;
+  color: black;
+  position: absolute;
+  right: 0.05rem;
+  top: 0.05rem;
+  padding: 0 0.5rem;
+  line-height: 1.625rem;
+  font-weight: 400;
+  font-size: 1.5rem;
+  border-radius: 0 7px;
+  text-align: center;
+  font-family: sans-serif;
+}
+#colourPallete span{
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 2rem;
+  line-height: 1.4rem;
+  border: 2px solid #444;
+  border-radius: 5px;
+  color: black;
+  margin: 0 0.3rem;
+  transition: 0.2s;
+}
+#colourPallete span:active{
+  border: 2px solid gold;
+}
+#colourPallete{
+  width: 100%;
+  background: black;
+  height: 50px;
+  border: 1px solid black;
+  position: absolute;
+  padding: 1rem 0;
+  border-radius: 0 0 9px 9px;
+  left: 0;
+  bottom: 0;
+  white-space: wrap;
+  overflow-y: scroll;
+}
+#brushPreviewBox{
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  background: rgba(100, 100, 100, 0.5);
+  right: 1rem;
+  border-radius: 25px;
+  top: 3rem;
+}
+#brushPreview{
+  background: black;
+  box-sizing: content-box;
+  width: 2px;
+  height: 2px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 50%;
+}
+#brushSizeDisplay{
+  position: absolute;
+  right: 20px;
+  top: calc(50px + 3.5rem);
+  text-align: center;
+  line-height: 1rem;
+  width: 2.5rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #555;
+  color: #e8e8e8;
+  border-radius: 5px;
+  font-weight: 900;
+}
+
+#brushTypeBox{
+  width: 70%;
+  display: inline-flex;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  justify-content: space-around;
+  padding: 0.2rem 0;
+}
+#brushTypeBox span{
+  line-height: 1rem;
+  color: #aaa;
+  transition: 0.5s;
+}
+#brushTypeBox span:first-child{
+  color: gold;
+  border-bottom: 1.5px solid gold;
+  font-weight: 900;
+}
+input[type="range"]{
+  border: 1px solid #333;
+  width: calc(60% - 2.8rem);
+  appearance: none;
+  caret-color: #aaa;
+  background: transparent;
+  border-radius: 20px;
+  box-shadow: inset 1px 1px 10px #000, inset -1px -1px 10px #555;
+  transform: translate(0, 25%);
+  padding: 0.15rem;
+}
+#menuBtn{
+  padding: 5px;
+  padding-bottom: 0;
+  width: 50px;
+  background: rgba(0,0,0,0.8);
+  border: 2px solid #444;
+  border-radius: 25px;
+  box-shadow: inset 1px 1px 15px #000, inset -1px -1px 10px #aaa;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 10%;
+  z-index: 5;
+  backdrop-filter: blur(1px);
+}
+#menuBtn svg{
+  width: 35px;
+  height: 35px;
+  fill: #aaa;
+  border: 2px solid #666;
+  border-radius: 25px;
+  padding: 5px;
+  transition: 0.1s fade-in;
+  transition-delay: 0;
+}
+
+#menuBtn svg:active{
+  border: 2px solid gold;
+  fill: gold;
+}
+#menuBtn div:first-child{
+  /*This code is gor menu close btn*/
+  text-align: center;
+  font-size: 2rem;
+  color: red;
+  margin-top: 0;
+  border: 2px solid red;
+  border-radius: 25px;
+  width: 2.5rem;
+  margin-left: -0.1rem;
+  margin-top: -0.1rem;
+  margin-bottom: 1rem;
+  line-height: 2.2rem;
+}
+#menuBtn div{
+  margin: 0.3rem 0;
+}
+#menuColourPreview{
+  width: 35px;
+  height: 35px;
+  border-radius: 50px;
+}
+#shapesContainer{
+  padding: 1rem;
+}
+#shapesContainer button{
+  padding: 0.5rem;
+  outline: none;
+  background: rgba(100, 100, 100, 0.5);
+  border: 2px solid #444;
+  border-radius: 5px;
+  font-weight: 900;
+  transition: 0.2s;
+  margin-bottom: 1rem;
+}
+#shapesContainer button:active{
+  background: rgba(250, 250, 50, 0.5);
+  border: 2px solid gold;
+}
+#circleFromCenter{
+  padding: 0.2rem 0.5rem;
+  border-radius: 50px;
+  border: 2px solid black;
+}
+#circle{
+  padding: 0.2rem 0.7rem;
+  content: " ";
+  border-radius: 50px;
+  border: 2px solid black;
+}
+#rectangle{
+  content: " ";
+  padding: 0.2rem 0.8rem;
+  border: 2px solid black;
+}
+#newFilebtn{
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: 900;
+  top: 0.15rem;
+  right: 2.5rem;
+  color: black;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.7);
+  line-height: 1rem;
+  border-radius: 25px;
+}
+.fileName{
+  display: inline-block;
+  width: 90%;
+  padding: 0.2rem 0.5rem;
+  box-shadow: inset 1px 1px 15px #555;
+  color: gold;
+  margin: 0.2rem 0;
+  border-radius: 5px;
+}
+.fileName:active{
+  box-shadow: inset 1px 1px 25px gold;
+  color: black;
+}
+.deleteFilebtn{
+  display: inline-block;
+  color: red;
+  text-align: center;
+  border: 1px solid red;
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+  font-weight: 900;
+}
+.deleteFilebtn:active{
+  background: red;
+  color: black;
+}
+#filesContainer{
+  overflow-y: scroll;
+  padding-top: 0;
+  height: 150%;
+  top: 0;
+}
+
+#fileNameInp{
+  outline: none;
+  border: 2px solid #555;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 10%;
+  background: #484848;
+  border-radius: 5px;
+  padding: 0.5rem;
+  width: 90%;
+  color: #aaa;
+  caret-color: #aaa;
+  text-align: center;
+}
+
+#popUpbtnsContainer{
+  position: absolute;
+  bottom: 5%;
+  left: 0;
+  padding: 1rem 20%;
+  width: 100%;
+}
+
+#popUpbtnsContainer span{
+  display: block;
+  text-align: center;
+  border: 1px solid #aaa;
+  margin: 0.5rem;
+  color: #aaa;
+  border-radius: 5px;
+}
+#popUpbtnsContainer span:active{
+  border: 1px solid gold;
+  color: gold;
+}
+    </style>
+  </head>
+  <body allow="fullscreen">
+    <canvas id="canvas"></canvas>
+    <canvas id="canvas2"></canvas>
+    <div id="popUp">
+      <h3 id="popUpHeader">Header</h3>
+      <span id="popUpClosebtn">x</span>
+    </div>
+    <div id="menuBtn" >
+        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" onclick="openMenu()">
+          <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+        </svg>
+    </div>
+  </body>
+  <script>
+
+const canvas  = document.getElementById("canvas");
+const canvas2 = document.getElementById("canvas2");
+const ctx  = canvas.getContext("2d");
+const ctx2 = canvas2.getContext("2d");
+
+let ITX, ITY, FTX, FTY; // To store coordinates initial touch and final touch
+
+let paintings = []; // To store pantings as text
+let currentPaintingIndex = 0;
+let paintlog = "";
+
+let Brush = {
+  colour    : "#52a",
+  type      : 0, // 0-default(pencil), 1-brush, 2-eraser
+  shape     : 0, // 0-Noshape, 1-line, 2-circlewithcenter, 3-circlefromedge, 4-rect , 5-triangle, 6-hexagon, 7-octagon, 8-star
+  size      : 10 // Thickness of brush
+}
+
+class Painting{
+  constructor(name, id, paintlog){
+    this.name = name;
+    this.id   = id;
+    if(paintlog != undefined){
+      this.paintlog = paintlog;
+    }
+    else{
+      this.paintlog = "";
+    }
+  }
+}
+
+window.onload = ()=>{
+  canvas.width   =  window.outerWidth*2; // Multiplied by 2 to improve resolution
+  canvas.height  = (window.outerHeight+window.outerHeight*0.1)*2;
+  canvas2.width  =  window.outerWidth*2;
+  canvas2.height = (window.outerHeight+window.outerHeight*0.1)*2;
+  
+  canvas.style.width = window.outerWidth+"px";
+  canvas.style.height = (window.outerHeight+window.outerHeight*0.1)+"px";
+  canvas2.style.width = window.outerWidth+"px";
+  canvas2.style.hidth = (window.outerHeight+window.outerHeight*0.1)+"px";
+  
+  canvas2.addEventListener("touchstart", start);
+  canvas2.addEventListener("touchmove", move);
+  canvas2.addEventListener("touchend", end);
+  
+  canvas2.addEventListener("mousedown", start);
+  canvas2.addEventListener("mousemove", move);
+  canvas2.addEventListener("mouseup", end);
+  
+  let menubtn = document.getElementById("menuBtn");
+  menubtn.addEventListener("touchmove", dragMenu);
+  
+  paintings.push(new Painting("Default", 0));
+  readAndWrite(true);
+  newFile();
+}
+
+function start(touch){
+  ITX = Math.round(touch.touches[0].clientX*2); // Reason for multiplying by 2 : read comment after line no. 58
+  ITY = Math.round(touch.touches[0].clientY*2);
+  
+  ctx.lineWidth   = Brush.size;
+  ctx.strokeStyle = Brush.colour;
+  ctx.fillStyle   = Brush.colour;
+  
+  ctx2.lineWidth   = Brush.size;
+  ctx2.strokeStyle = Brush.colour;
+  ctx2.fillStyle   = Brush.colour;
+  
+  paintlog += "\nset="+Brush.colour+"|"+Brush.size+"|"+Brush.type+"|"+Brush.shape;
+
+  if(Brush.shape == 0){
+    ctx.beginPath();
+    switch(Brush.type){
+      case 0: 
+        ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+        paintlog += "\nPS="+ITX+" "+ITY;
+      break;
+      case 1:
+        ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+        paintlog += "\nPS="+ITX+" "+ITY+" "+Brush.size;
+      break;
+      case 2: 
+        ctx.clearRect(ITX-Brush.size/2, ITY-Brush.size/2, Brush.size, Brush.size);
+        paintlog += "\nclrct="+ITX+" "+ITY;
+      break;
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function move(touch){
+  //Brush.shape = 5;
+  if(touch.cancelable){
+    touch.preventDefault();
+  }
+  ctx2.beginPath();
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  ctx2.closePath();
+  FTX = Math.round(touch.touches[0].clientX*2);
+  FTY = Math.round(touch.touches[0].clientY*2);
+  if(Brush.shape == 0){
+    ctx.beginPath();
+    switch(Brush.type){
+      case 0:
+        ctx.moveTo(ITX, ITY);
+        ctx.lineTo(FTX, FTY);
+        ctx.closePath();
+        ctx.stroke();
+        paintlog += "/PL_"+(Number(FTX)-Number(ITX))+" "+(Number(FTY)-Number(ITY));
+      break;
+      case 1:
+        ctx.arc(FTX, FTY, Brush.size/2 , 0, 6.3);
+        ctx.closePath();
+        ctx.fill();
+        paintlog += "/Parc_"+ITX+" "+ITY;
+      break;
+      case 2:
+        ctx.clearRect(FTX-Brush.size/2, FTY-Brush.size/2, Brush.size, Brush.size);
+        ctx.closePath();
+        ctx.fill();
+        ctx2.strokeStyle = "#000";
+        ctx2.lineWidth = 1;
+        ctx2.rect(FTX-Brush.size/2, FTY-Brush.size/2, Brush.size, Brush.size);
+        ctx2.stroke();
+        paintlog += "\nclrct="+ITX+" "+ITY;
+      break;
+    }
+    
+    ctx.fill();
+    ITX = FTX;
+    ITY = FTY;
+  }
+  else{
+    ctx2.beginPath();
+    switch(Brush.shape){
+      case 1:
+        ctx2.moveTo(ITX, ITY);
+        ctx2.lineTo(FTX, FTY);
+      break;
+      case 2:
+        if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+          ctx2.arc(ITX, ITY, Math.abs(FTX-ITX), 0, 6.3);
+        }
+        else{
+          ctx2.arc(ITX, ITY, Math.abs(FTY-ITY), 0, 6.3);
+        }
+      break;
+      case 3:
+        if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+          ctx2.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTX-ITX)/2, 0, 6.3);
+        }
+        else{
+          ctx2.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTY-ITY)/2, 0, 6.3);
+        }
+      break;
+      case 4:
+        ctx2.rect(ITX, ITY, FTX-ITX, FTY-ITY);
+      break;
+      case 5:
+        drawTriangle(ITX, ITY, FTX, FTY, ctx2);
+      break;
+      case 6:
+        drawHexagon(ITX, ITY, FTX, FTY, ctx2);
+      break;
+      case 7:
+        drawOctagon(ITX, ITY, FTX, FTY, ctx2);
+      break;
+      case 8:
+        drawStar(ITX, ITY, FTX, FTY, ctx2);
+      break;
+    }
+    ctx2.closePath();
+    ctx2.stroke();
+  }
+}
+
+function end(touch){
+  FTX = Math.round(touch.changedTouches[0].clientX*2);
+  FTY = Math.round(touch.changedTouches[0].clientY*2);
+  if(Brush.shape == 0){
+    ctx.beginPath();
+    switch(Brush.type){
+      case 0: 
+        ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+        paintlog += "/PE_"+ITX+" "+ITY;
+      break;
+      case 1:
+        ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+        paintlog += "/PE_"+ITX+" "+ITY;
+      break;
+      case 2: 
+        ctx.clearRect(ITX-Brush.size/2, ITY-Brush.size/2, Brush.size, Brush.size);
+        paintlog += "\nclrct="+ITX+" "+ITY;
+      break;
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  else{
+    ctx.beginPath();
+    switch(Brush.shape){
+      case 1:
+        ctx.moveTo(ITX, ITY);
+        ctx.lineTo(FTX, FTY);
+        paintlog += "\nL="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 2:
+        if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+          ctx.arc(ITX, ITY, Math.abs(FTX-ITX), 0, 6.3);
+        }
+        else{
+          ctx.arc(ITX, ITY, Math.abs(FTY-ITY), 0, 6.3);
+        }
+        paintlog += "\nCc="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 3:
+        if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+          ctx.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTX-ITX)/2, 0, 6.3);
+        }
+        else{
+          ctx.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTY-ITY)/2, 0, 6.3);
+        }
+        paintlog += "\nC="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 4:
+        ctx.rect(ITX, ITY, FTX-ITX, FTY-ITY);
+        paintlog += "\nR="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 5:
+        drawTriangle(ITX, ITY, FTX, FTY, ctx);
+        paintlog += "\nT="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 6:
+        drawHexagon(ITX, ITY, FTX, FTY, ctx);
+        paintlog += "\nH="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 7:
+        drawOctagon(ITX, ITY, FTX, FTY, ctx);
+        paintlog += "\nO="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+      case 8:
+        drawStar(ITX, ITY, FTX, FTY, ctx);
+        paintlog += "\nStar="+ITX+" "+ITY+" "+FTX+" "+FTY;
+      break;
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  ITX = FTX;
+  ITY = FTY;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  
+  paintings[currentPaintingIndex].paintlog = paintlog;
+}
+
+function readAndWrite(read){
+  // If read is true then reads files from localstorage if false then saves them to localstorage
+  // localStorage.setItem("SavedPaintings", "")
+  if(read){
+    try{
+      let savedpaintings = localStorage.getItem("SavedPaintings").split("---NewPainting---");
+      if(savedpaintings == ""){
+        return;
+      }
+      //console.log(savedpaintings)
+      for(let i=0;i<savedpaintings.length;i++){
+        if(savedpaintings[i] != ""){
+          let info = savedpaintings[i].split("-info-"); 
+          let name = info[0];
+          let id   = info[1];
+          let log  = info[2];
+          
+          paintings.push(new Painting(name, id, log));
+        }
+      }
+    }
+    catch(e){}
+    //drawSavedFile(currentPaintingIndex);
+  }
+  else{
+    let savedpaintings = "";
+    for(let i=0; i<paintings.length;i++){
+      savedpaintings += "---NewPainting---"+paintings[i].name+"-info-"+paintings[i].id+"-info-"+paintings[i].paintlog;
+    }
+    localStorage.setItem("SavedPaintings", savedpaintings);
+    //console.log(savedpaintings)
+    //console.log(paintings)
+  }
+}
+
+function viewFiles(){
+  let fileMenuHTML = `<h3 id="popUpHeader">Saved Files</h3><span id="newFilebtn" onclick="newFile()">+</span><span id="popUpClosebtn" onclick="closePopUp()">x</span>
+  <div id="filesContainer"></div>`;
+  popUp(fileMenuHTML);
+  let cont = document.getElementById("filesContainer");
+  
+  for(let i=0; i<paintings.length;i++){
+    filesContainer.innerHTML += `<span class="fileName" onclick="openFile(${i})">${paintings[i].name}</span><span class="deleteFilebtn" onclick="deleteFile(${i})">x</span>`;
+  }
+}
+function openFile(index){
+  ctx.clearRect(0,0, canvas.width, canvas.height);
+  paintlog = paintings[index].paintlog;
+  drawSavedFile(index);
+  closePopUp();
+  currentPaintingIndex = index;
+}
+
+function deleteFile(index){
+  paintings.splice(index, 1);
+  viewFiles();
+}
+
+function newFile(name){
+  document.querySelector("body").requestFullscreen();
+  if(name == undefined){
+    popUp(`<input type="text" id="fileNameInp" placeholder="Enter File Name" /><br>
+    <div id="popUpbtnsContainer"></div>`);
+    
+    let confirm = document.createElement("span");
+    confirm.innerText = "Confirm";
+    confirm.addEventListener("click", ()=>{
+      newFile(document.getElementById("fileNameInp").value);
+    });
+    let load = document.createElement("span");
+    load.innerText = "Load Saved Files";
+    load.addEventListener("click", viewFiles);
+    
+    let cont = document.getElementById("popUpbtnsContainer");
+    cont.appendChild(load);
+    cont.appendChild(confirm);
+  }
+  else if(name == ""){
+    newFile();
+  }
+  else{
+    if(paintings.length == 0){
+      paintings.push(new Painting(name, 1));
+      currentPaintingIndex = 0;
+    }
+    else{
+      paintings.push(new Painting(name, paintings[paintings.length-1].id+1));
+      currentPaintingIndex = paintings.length-1;
+    }
+    closePopUp();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    paintlog = "";
+  }
+}
+
+function undo(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  paintlog = paintlog.substr(0, paintlog.lastIndexOf("\n"));
+  paintings[currentPaintingIndex].paintlog = paintlog;
+  drawSavedFile(currentPaintingIndex);
+}
+
+function drawSavedFile(index){
+  let logs = paintings[index].paintlog.split("\n");
+  for(let i=1; i<logs.length; i++){
+    let commands = logs[i].split("=");
+    switch(commands[0]){
+      case "set":
+        settings = commands[1].split("|");
+        Brush.colour = settings[0];
+        Brush.size = Number(settings[1]);
+        Brush.type = Number(settings[2]);
+        Brush.shape = Number(settings[3]);
+      break;
+      case "PS":
+        ctx.fillStyle = Brush.colour;
+        ctx.strokeStyle = Brush.colour;
+        ctx.lineWidth = Brush.size;
+        let instructions = commands[1].split("/");
+        ITX = instructions[0].split(" ")[0];
+        ITY = instructions[0].split(" ")[1];
+        ctx.beginPath();
+        ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+        ctx.closePath();
+        ctx.fill();
+          for(let i=1;i<instructions.length;i++){
+            let pathData = instructions[i].split("_");
+            if(pathData[0] == "PL"){
+              let dx = pathData[1].split(" ")[0];
+              let dy = pathData[1].split(" ")[1];
+              ctx.beginPath();
+              ctx.moveTo(ITX, ITY);
+              FTX = Number(ITX) + Number(dx);
+              FTY = Number(ITY) + Number(dy);
+              ctx.lineTo(FTX, FTY);
+              ctx.closePath();
+              ctx.stroke();
+              ITX = FTX;
+              ITY = FTY;
+            }
+            else if(pathData[0] == "Parc"){
+              let coordinates = pathData[1].split(" ");
+              ITX = coordinates[0]; ITY = coordinates[1];
+              ctx.beginPath();
+              ctx.arc(ITX, ITY , Brush.size/2, 0, 6.3);
+              ctx.closePath();
+              ctx.fill();
+            }
+            else if(pathData[0] == "PE"){
+              let coordinates = pathData[1].split(" ");
+              FTX = coordinates[0]; FTY = coordinates[1];
+              ctx.beginPath();
+              ctx.arc(FTX, FTY , Brush.size/2, 0, 6.3);
+              ctx.closePath();
+              ctx.fill();
+            }
+          }
+      break;
+      default:
+        ctx.fillStyle = Brush.colour;
+        ctx.lineWidth = Brush.size;
+        ctx.strokeStyle = Brush.colour;
+        ctx.beginPath();
+        let coordinates = commands[1].split(" ");
+        ITX = Number(coordinates[0]);
+        ITY = Number(coordinates[1]);
+        FTX = Number(coordinates[2]);
+        FTY = Number(coordinates[3]);
+        switch(commands[0]){
+          case "L":
+            ctx.moveTo(ITX, ITY);
+            ctx.lineTo(FTX, FTY);
+            ctx.closePath();
+            ctx.stroke();
+          break;
+          case "Cc":
+            if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+              ctx.arc(ITX, ITY, Math.abs(FTX-ITX), 0, 6.3);
+            }
+            else{
+              ctx.arc(ITX, ITY, Math.abs(FTY-ITY), 0, 6.3);
+            }
+            ctx.closePath();
+            ctx.stroke();
+          break;
+          case "C":
+            if( Math.abs(FTX-ITX)>Math.abs(FTY-ITY) ){
+              ctx.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTX-ITX)/2, 0, 6.3);
+            }
+            else{
+              ctx.arc((ITX+FTX)/2, (ITY+FTY)/2, Math.abs(FTY-ITY)/2, 0, 6.3);
+            }
+            ctx.closePath();
+            ctx.stroke();
+          break;
+          case "R":
+            ctx.rect(ITX, ITY, FTX-ITX, FTY-ITY);
+            ctx.closePath();
+            ctx.stroke();
+          break;
+          case "T":
+            drawTriangle(ITX, ITY, FTX, FTY, ctx);
+          break;
+          case "H":
+            drawHexagon(ITX, ITY, FTX, FTY, ctx);
+          break;
+          case "O":
+            drawOctagon(ITX, ITY, FTX, FTY, ctx);
+          break;
+          case "Star":
+            drawStar(ITX, ITY, FTX, FTY, ctx);
+          break;
+          case "arc":
+            ctx.arc(ITX, ITY, Brush.size/2, 0, 6.3);
+            ctx.closePath();
+            ctx.fill();
+          break;
+          case "clrct": 
+            ctx.clearRect(ITX-Brush.size/2, ITY-Brush.size/2, Brush.size, Brush.size);
+            ctx.closePath();
+            ctx.stroke();
+          break;
+        }
+    }
+  }
+}
+/*|  setting brush : set=colour|size|type|shape (parameters separated by pipe symbol-|)
+  |  drawing :
+  |    Line Path  : PS=ITX ITY/PL_dx dy/PL_dx dy/........./PE_FTX FTY (here PS is path start PL is for line path when Brush type pencil(0) is selected
+  |                 dx is the difference between previous x coordinates and current x coordinates and PE is path end . Parc will be used instead of 
+  |                 PL when Brush type brush(1) is selected) .
+  |    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  |    line               :  L=ITX ITY FTX FTY
+  |    circle from centre : Cc=ITX ITY FTX FTY
+  |    circle             :  C=ITX ITY FTX FTY
+  |    rectangle          :  R=ITX ITY FTX FTY
+  |    Triangle           :  T=ITX ITY FTX FTY
+  |    Hexagon            :  H=ITX ITY FTX FTY
+  |    Octagon            :  O=ITX ITY FTX FTY
+  |    Star               :  Star=ITX ITY FTX FTY
+  |    arc                :  arc=ITX ITY */
+
+// UI Functions start here 
+// bMenuHtml = Brush settings menu content
+const bMenuHtml = `<h3 id="popUpHeader">Brush Settings</h3><span id="popUpClosebtn" onclick="closePopUp()">x</span>
+<div id="brushPreviewBox"><div id="brushPreview"></div></div>
+<span id="brushTypeBox"> <span class="brushTypeSetter" onclick="setBrushType(0)">Pencil</span><span class="brushTypeSetter" onclick="setBrushType(1)">Brush</span><span class="brushTypeSetter" onclick="setBrushType(2)">Eraser</span> </span><br>
+<br>Thickness <input type="range" id="brushSizeinp" min="1" max="100" value="2" oninput="setBrushThickness()"/><span id="brushSizeDisplay">2</span> <br>
+<div id="colourPallete">
+<span class="colourSetter" onclick="setBrushColour('#f00')" style="background: #f00;"></span>
+<span class="colourSetter" onclick="setBrushColour('#0f0')" style="background: #0f0;"></span>
+<span class="colourSetter" onclick="setBrushColour('#00f')" style="background: #00f;"></span>
+<span class="colourSetter" onclick="setBrushColour('#f0f')" style="background: #f0f;"></span>
+<span class="colourSetter" onclick="setBrushColour('#ff0')" style="background: #ff0;"></span>
+<span class="colourSetter" onclick="setBrushColour('#0ff')" style="background: #0ff;"></span>
+<span class="colourSetter" onclick="setBrushColour('#000')" style="background: #000;"></span>
+<span class="colourSetter" onclick="setBrushColour('#fff')" style="background: #fff;"></span>
+<span class="colourSetter" onclick="setBrushColour('more')" style="background: #aaa;">+</span>
+</div>`;
+
+const shapesMenuHTML = `<h3 id="popUpHeader">Select Shapes</h3><span id="popUpClosebtn" onclick="closePopUp()">x</span>
+<div id="shapesContainer">  
+  <button onclick="Brush.shape = 1">———</button>
+  <button onclick="Brush.shape = 2"><span id="circleFromCenter">•</span></button>
+  <button onclick="Brush.shape = 3"><span id="circle"></span></button>
+  <button onclick="Brush.shape = 4"><span id="rectangle"></span></button>
+  <button onclick="Brush.shape = 5"><span id="triangle">Tri</span></button>
+  <button onclick="Brush.shape = 6"><span id="hexagon">Hexa</span></button>
+  <button onclick="Brush.shape = 7"><span id="octagon">Octa</span></button>
+  <button onclick="Brush.shape = 8"><span id="star">Star</span></button>
+</div>`;
+
+function setBrushThickness(){
+  let thickness = document.getElementById("brushSizeinp").value;
+  Brush.size = brushSizeDisplay.innerText = thickness;
+  document.getElementById("brushPreview").style.width = thickness/2 + "px";
+  document.getElementById("brushPreview").style.height = thickness/2 + "px";
+  
+}
+function setBrushColour(color, r, g, b){
+  if(color == "more"){
+    displayColourPallete();
+  }
+  Brush.colour = color;
+  if(r != undefined){
+    document.getElementById("brushPreview").style.background = "rgba("+r+","+g+","+b+", 1)";
+    document.getElementById("menuColourPreview").style.background = "rgba("+r+","+g+","+b+", 1)";
+  }
+  else{
+    document.getElementById("brushPreview").style.background = color;
+    document.getElementById("menuColourPreview").style.background = color;
+  }
+}
+
+function setBrushType(type){
+  Brush.type = type;
+  Brush.shape = 0;
+  let setters = document.getElementsByClassName("brushTypeSetter");
+  for(let i=0;i<setters.length;i++){
+    if(i==type){
+      setters[i].style.color = "gold";
+      setters[i].style.borderBottom = "1.5px solid gold";
+      setters[i].style.fontWeight = "900";
+      continue;
+    }
+    setters[i].style.color = "#aaa";
+    setters[i].style.borderBottom = "none";
+    setters[i].style.fontWeight = "400";
+  }
+}
+
+function displayColourPallete(){
+  closePopUp();
+  let colourPalleteHTML = `<h3 id="popUpHeader">Colour Pallete</h3><span id="popUpClosebtn" onclick="closePopUp()">x</span> <div id="colourPallete"></div>`;
+  popUp(colourPalleteHTML);
+  let colourPallete = document.getElementById("colourPallete");
+  colourPallete.style.height = "165px";
+  colourPallete.style.background = "transparent";
+  
+  for(let i=0; i<=240; i+=30){
+    for(let j=0; j<=240; j+=30){
+      for(let k=0; k<=240; k+=30){
+        let colourSetter = document.createElement("span");
+        colourSetter.setAttribute("class", "colourSetter");
+        colourSetter.style.background = `rgba(${i}, ${j}, ${k}, 1)`;
+        colourSetter.addEventListener("click", ()=>{setBrushColour(`rgb(${i} ${j} ${k} / 100%)`, i, j, k)});
+        colourPallete.appendChild(colourSetter);
+      }
+    }
+  }
+}
+
+function dragMenu(event){
+  event.preventDefault();
+  let menu = document.getElementById("menuBtn");
+  menu.style.top = event.touches[0].clientY +"px";
+  menu.style.left = event.touches[0].clientX +"px";
+}
+
+function openMenu(){
+  let menu = document.getElementById("menuBtn");
+  menu.innerHTML = "";
+  
+  let closebtn = document.createElement("div");
+  closebtn.innerText = "X";
+  closebtn.addEventListener("click", ()=>{menu.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" onclick="openMenu()">
+          <path d="M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/>
+        </svg>`;});
+  
+  let colourbtn = document.createElement("div");
+  colourbtn.setAttribute("id", "menuColourPreview");
+  colourbtn.addEventListener("click", displayColourPallete);
+  colourbtn.style.background = Brush.colour;
+  
+  let brushbtn = document.createElement("div");
+  brushbtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000">
+  <path d="M215-117q-33.83 0-66.92-11.5Q115-140 90-166q35-12 50-35t15-62q0-43.75 30.68-74.38Q216.35-368 260.18-368q43.82 0 74.32 30.62Q365-306.75 365-263q0 64-43.5 105T215-117Zm0-60q35 0 62.5-25t27.5-61q0-20-12.5-32.5T260-308q-20 0-32.5 12.5T215-263q0 39-8.5 57.5T175-183q6 1 20 3.5t20 2.5Zm230-177-90-95 376-376q14-14 31-14.5t32 14.5l29 29q15 15 14.5 32.5T823-732L445-354Zm-185 91Z"/>
+</svg>`;
+  brushbtn.addEventListener("click", displayBrushSettings);
+  
+  let shapesbtn = document.createElement("div");
+  shapesbtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" >
+  <path d="m261-526 220-354 220 354H261ZM706-80q-74 0-124-50t-50-124q0-74 50-124t124-50q74 0 124 50t50 124q0 74-50 124T706-80Zm-586-25v-304h304v304H120Zm586.08-35Q754-140 787-173.08q33-33.09 33-81Q820-302 786.92-335q-33.09-33-81-33Q658-368 625-334.92q-33 33.09-33 81Q592-206 625.08-173q33.09 33 81 33ZM180-165h184v-184H180v184Zm189-421h224L481-767 369-586Zm112 0ZM364-349Zm342 95Z"/>
+</svg>`;
+  shapesbtn.addEventListener("click", ()=>{popUp(shapesMenuHTML)});
+  
+  let undobtn = document.createElement("div");
+  undobtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" onclick="undo()">
+  <path d="M259-200v-60h310q70 0 120.5-46.5T740-422q0-69-50.5-115.5T569-584H274l114 114-42 42-186-186 186-186 42 42-114 114h294q95 0 163.5 64T800-422q0 94-68.5 158T568-200H259Z"/>
+</svg>`;
+
+  let savebtn = document.createElement("div");
+  savebtn.innerHTML = `<svg onclick="readAndWrite(false)" xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" >
+  <path d="M840-683v503q0 24-18 42t-42 18H180q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h503l157 157Zm-60 27L656-780H180v600h600v-476ZM479.76-245q43.24 0 73.74-30.26 30.5-30.27 30.5-73.5 0-43.24-30.26-73.74-30.27-30.5-73.5-30.5-43.24 0-73.74 30.26-30.5 30.27-30.5 73.5 0 43.24 30.26 73.74 30.27 30.5 73.5 30.5ZM233-584h358v-143H233v143Zm-53-72v476-600 124Z"/>
+</svg>`;
+  
+  let viewFilesBtn = document.createElement("div");
+  viewFilesBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" >
+  <path d="M479.86-160Q460-160 446-174.14t-14-34Q432-228 446.14-242t34-14Q500-256 514-241.86t14 34Q528-188 513.86-174t-34 14Zm0-272Q460-432 446-446.14t-14-34Q432-500 446.14-514t34-14Q500-528 514-513.86t14 34Q528-460 513.86-446t-34 14Zm0-272Q460-704 446-718.14t-14-34Q432-772 446.14-786t34-14Q500-800 514-785.86t14 34Q528-732 513.86-718t-34 14Z"/>
+</svg>`;
+  viewFilesBtn.addEventListener("click", viewFiles);
+  
+  let clearbtn = document.createElement("div");
+  clearbtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" >
+  <path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z"/>
+</svg>`;
+  clearbtn.addEventListener("click", ()=>{ctx.clearRect(0, 0, canvas.width, canvas.height); paintlog = "";})
+  
+  menu.appendChild(closebtn);
+  menu.appendChild(brushbtn);
+  menu.appendChild(shapesbtn);
+  menu.appendChild(undobtn);
+  menu.appendChild(savebtn);
+  menu.appendChild(viewFilesBtn);
+  menu.appendChild(clearbtn);
+  menu.appendChild(colourbtn);
+}
+
+function displayBrushSettings(){
+  popUp(bMenuHtml);
+  let preview = document.getElementById("brushPreview");
+  let typeSetters = document.getElementsByClassName("brushTypeSetter");
+  let sizeinp = document.getElementById("brushSizeinp");
+  let brushSizeDisplay = document.getElementById("brushSizeDisplay");
+  preview.style.width = Brush.size/2+"px";
+  preview.style.height = Brush.size/2+"px";
+  preview.style.background = Brush.colour;
+  brushSizeDisplay.innerText = Brush.size;
+  sizeinp.value = Brush.size;
+  for(let i=0; i<typeSetters.length; i++){
+    typeSetters[i].style.color = "#aaa";
+    typeSetters[i].style.borderBottom = "none";
+  }
+  if(Brush.shape == 0){
+    typeSetters[Brush.type].style.color = "gold";
+    typeSetters[Brush.type].style.borderBottom = "1px solid gold";
+  }
+}
+
+function closePopUp(){
+  document.querySelector("body").requestFullscreen();
+  let pop = document.getElementById("popUp");
+  pop.style.zIndex = "-1";
+  pop.style.transform = "scale(0)";
+  popUp.innerHTML = "";
+}
+
+function popUp(content){
+  let pop = document.getElementById("popUp");
+  pop.innerHTML = content;
+  pop.style.zIndex = "4";
+  pop.style.transform = "scale(1)";
+}
+
+// Functions for Drawing additional shapes 
+
+// Draws an equilateral triangle or returns coordinates of apex when canvas rendering context is not passed since it will be used in other shapes
+// parameters are coordinates of base of the triangle
+function drawTriangle(x1, y1, x2, y2, context){
+  /*         ^
+  |         /|\
+  |       /  |  \
+  |     /____|____\ this vertical line is the height (we need it's slope)
+  */
+  let side_length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  let height = side_length*Math.sin(3.14159/3);
+  let centre = [(x1+x2)/2, (y1+y2)/2]; // stores coordinates of centre of parameter coordinates , this will be the centre of the base 
+  let slope = (x1-x2)/(y2-y1); // Gives slope of the line perpendicular to base (height)
+  // Getting coordinates of the apex
+  let apex_coordinates = [0, 0];
+  apex_coordinates[0] = centre[0] - height/Math.sqrt(slope*slope+1);
+  apex_coordinates[1] = centre[1] - slope*height/Math.sqrt(slope*slope+1);
+  
+  if(context != undefined){
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.lineTo(apex_coordinates[0], apex_coordinates[1]);
+    context.lineTo(x1, y1);
+    context.closePath();
+    context.stroke();
+  }
+  else{
+    // for inverted triangle 
+    apex_coordinates.push(centre[0] + height/Math.sqrt(slope*slope+1));
+    apex_coordinates.push(centre[1] + slope*height/Math.sqrt(slope*slope+1));
+    return apex_coordinates;
+  }
+  //console.log( context, centre, height, side_length, ax, ay, slope)
+}
+
+function drawHexagon(x1, y1, x2, y2, context){
+  // Using 6 triangles to draw a Hexagon
+  /*              _______
+  |             / \     / \
+  |            /___\::/____\ <--Parameters are coordinate of center and this point
+  |            \   /  \    / 
+  |              \/__ __\/
+  */
+  let centre = [x1, y1];
+  let coordinates = [[x2, y2, drawTriangle(x1, y1, x2, y2)]];
+  
+  for(let i=0; i<4;i++){
+    coordinates.push(drawTriangle(x1, y1, coordinates[i][0], coordinates[i][1]));
+  }
+  if(context != undefined){
+    context.beginPath();
+    context.moveTo(coordinates[0][0], coordinates[0][1]);
+    context.lineTo(coordinates[1][0], coordinates[1][1]);
+    context.lineTo(coordinates[2][0], coordinates[2][1]);
+    context.lineTo(coordinates[3][0], coordinates[3][1]);
+    context.lineTo(coordinates[4][2], coordinates[4][3]);
+    context.lineTo(coordinates[0][2][2], coordinates[0][2][3]);
+    context.lineTo(coordinates[0][0], coordinates[0][1]);
+    context.closePath();
+    context.stroke();
+  }
+  else{
+    return coordinates;
+  }
+}
+
+function drawOctagon(x1, y1, x2, y2, context){
+  // Using 5 square to draw an octagon
+  /*                             ___
+  |          #                 /|___|\
+  |        # # #  squares +   |_|___|_| = octagon (I can't draw any better with characters)
+  |          #                 \|___|/
+  */
+  let distance = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  let  s = 2*distance/3; // square_side_length = s
+  const root = Math.sqrt(2);
+  const msc = [[x1-s/root, y1-s/root], [x1+s/root, y1-s/root], [x1+s/root, y1+s/root], [x1-s/root, y1+s/root]]; // middle_square_coordinates = msc 
+  context.beginPath();
+  context.moveTo(msc[0][0], msc[0][1]-s);
+  context.lineTo(msc[1][0], msc[1][1]-s);
+  context.lineTo(msc[1][0]+s, msc[1][1]);
+  context.lineTo(msc[2][0]+s, msc[2][1]);
+  context.lineTo(msc[2][0], msc[2][1]+s);
+  context.lineTo(msc[3][0], msc[3][1]+s);
+  context.lineTo(msc[3][0]-s, msc[3][1]);
+  context.lineTo(msc[0][0]-s, msc[0][1]);
+  context.closePath();
+  context.stroke();
+}
+
+function drawStar(x1, y1, x2, y2, context){
+  // Using a hexagon and 6 triangles to create a star (Too difficult to draw with characters)
+  /*               b
+  |               /\
+  |            2 /  \1          Hcoordinates are marked with numbers
+  |       c---------------a     Tcoordinates are marked with alphabets
+  |        3\/         \/0
+  |         /\4       5/\
+  |       d---------------f
+  |            \    /
+  |              \/ e                                       */
+  let HC = drawHexagon(x1, y1, x2, y2); // HC = Hcoordinates or coordinates of points on the hexagonal part of star
+  let TC = []; // TC = Tcoordinates or coordinates of points on the trianular parts of star
+  TC.push(drawTriangle(HC[0][0], HC[0][1], HC[1][0], HC[1][1]));// inverted - a
+  TC.push(drawTriangle(HC[1][0], HC[1][1], HC[2][0], HC[2][1]));
+  TC.push(drawTriangle(HC[2][0], HC[2][1], HC[3][0], HC[3][1]));
+  TC.push(drawTriangle(HC[3][0], HC[3][1], HC[4][2], HC[4][3]));
+  TC.push(drawTriangle(HC[4][2], HC[4][3], HC[0][2][2], HC[0][2][3]));//inverted - e
+  TC.push(drawTriangle(HC[0][2][2], HC[0][2][3], HC[0][0], HC[0][1]));//inverted - f
+  
+  context.beginPath();
+  context.moveTo(HC[0][0], HC[0][1]); // 0
+  context.lineTo(TC[0][2], TC[0][3]); // a
+  context.lineTo(HC[1][0], HC[1][1]); // 1
+  context.lineTo(TC[1][0], TC[1][1]); // b
+  context.lineTo(HC[2][0], HC[2][1]); // 2
+  context.lineTo(TC[2][0], TC[2][1]); // c
+  context.lineTo(HC[3][0], HC[3][1]); // 3
+  context.lineTo(TC[3][0], TC[3][1]); // d
+  context.lineTo(HC[4][2], HC[4][3]); // 4
+  context.lineTo(TC[4][2], TC[4][3]); // e
+  context.lineTo(HC[0][2][2], HC[0][2][3]); // 5
+  context.lineTo(TC[5][2], TC[5][3]); // f
+  context.closePath();
+  context.stroke();
+}
+
+  </script>
+</html><!-- 
+
+Recommended to turn word wrap off (for small screens)
+Notes :-
+
+I. Index : javascript starts at line no. 354
+ ________________________________________________________
+ |  Code Type                               | Line no.  |
+ |1. Live Drawing function                  | 412-610   |
+ |2. Save and Read mechanism                | 612-705   |
+ |3. Drawing Saved files and undo mechanism | 707-852   |
+ |4. UI Functions                           | 854-1043  |
+ |5. Functions for complex shapes           | 1046-1173 |
+ ________________________________________________________
+________________________________________________________________________________________________________________________________________________________________________
+II| Reading and Writing PaintLog (stored as paintlog):
+  |    Each line will be a new set of instructions. 
+  |    1. setting brush : set=colour|size|type|shape (parameters separated by pipe symbol-|)
+  |    2. drawing :
+  |      
+  |      A. Line Path          : PS=ITX ITY/PL_dx dy/PL_dx dy/........./PE_FTX FTY (here PS is path start PL is for line path when Brush type pencil(0) is selected
+  |                          dx is the difference between previous coordinates and current coordinates and PE is path end . Parc will be used instead of 
+  |                          PL when Brush type brush(1) is selected)
+  |      
+  |      B. Line               :  L=ITX ITY FTX FTY
+  |      C. Circle from centre : Cc=ITX ITY FTX FTY
+  |      D. Circle             :  C=ITX ITY FTX FTY
+  |      E. Rectangle          :  R=ITX ITY FTX FTY
+  |      F. Triangle           :  T=ITX ITY FTX FTY
+  |      G. Hexagon            :  H=ITX ITY FTX FTY
+  |      H. Octagon            :  O=ITX ITY FTX FTY
+  |      I. Star               :  Star=ITX ITY FTX FTY
+  |      J. arc                :  arc=ITX ITY 
+__|_____________________________________________________________________________________________________________________________________________________________________
+III| Reading and writing saves :-
+  |      Saved File is stored as text . Each painting is separated 
+  |      by ---NewPainting--- .
+  |      then each type of information (name, id, paintlog) of
+  |      respective painting is separated by -info- .
+  |      So a Saved File looks like this :
+  |      ---NewPainting---Name-info-id-info-paintlog---NewPainting---name-info-id-info-paintlog...........
+__|______________________________________________________________________________________________________________________________________________________________________
+IV| Features :-
+  |    A. Variety of shapes, brushes and colours . 512 colours available .
+  |    B. Save and undo features .
+  |    C. Draggable menu button .
+  |    D. Intensive application of javascript knowledge
+  |    E. (More features will be added in upcoming versions)
+__|_____________________________________________________________________________________________________________________________________________________________________
+V.| Project Details :
+  |    Author     :- Parth Shendge
+  |    Created on :- 27/07/2024 (DD/MM/YYYY)
+  |    Finished on:- 31/07/2024
+  |    Last Update:- 03/08/2024
+  |    Version    :  2.01 (Final but might be updated later)
+  |    IDE used   :  Acode editor 1.10.3 (950)
+  |    licence   :  unliscenced, no copyright 
+  |    Please do not copy this project without my permission or mentioning credit.
+__|_____________________________________________________________________________________________________________________________________________________________________
+VI| Changelog :
+  |   Version 2.01 : 03/08/2024 (old saves will work too)
+  |     1.Added mouse events.
+  |     2.Border to Eraser.
+  |     3.Added triangle, hexagon, octagon and star shapes.
+  |     4.View app in Full Screen when any popup is closed.
+  |     5.A default painting will be created everytime (remember to delete them if you don't want it in your saved files).
+  |     6.Bugs :- New Bugs introduced in complex shape functions (except octagon , all others have bugs it is Recommended to slide your finger horizontally while 
+  |               shapes except creating these shapes but do not keep the y-coordinates same , this will make the slope of height of triangle infinity , all other
+  |               octagon , use triangles in thier geometry , this made them buggy) . No bugs were reported in previous version therefore no bugs have been fixed.
+__|____________________________________________________________________________________________________________________________________________________________________-->
